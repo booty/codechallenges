@@ -1,30 +1,39 @@
 # frozen_string_literal: true
 
 # https://leetcode.com/problems/longest-palindromic-substring/
+# Runtime 677ms
+# Beats 82.91%
+# Memory 211 MB
+# Beats 77.78%
 
 require "benchmark/ips"
 require "pry-byebug"
 
 BM_WARMUP_SECONDS = 0.5
 BM_TIME_SECONDS = 1.5
-DEBUG = true
+DEBUG = false
 
 # rubocop:disable Layout/LineLength
 test_cases = [
-  # { input: "a", result: ["a"] },
-  # { input: "ac", result: ["a", "c"] },
-  # { input: "babad", result: ["bab", "aba"] },
-  # { input: "ccc", result: ["ccc"] },
-  # { input: "johnabbazz", result: ["abba"] },
-  # { input: "johnabazyz", result: ["aba"] },
-  # { input: "johnabcbazyz", result: ["abcba"] },
-  # { input: "johnabbazyz", result: ["abba"] },
-  # { input: "bbdzyx", result: ["bb"] },
-  # { input: "zyxjj", result: ["jj"] },
-  # { input: "zyxojjo", result: ["ojjo"] },
-  # { input: "abvba", result: ["abvba"] },
-  # { input: "aabbbaa", result: ["aabbbaa"] },
-  # { input: "aabbaa", result: ["aabbaa"] },
+  { input: "aaaa123", result: ["aaaa"] },
+  { input: "1" * 99, result: ["1" * 99] },
+  { input: "2" * 100, result: ["2" * 100] },
+  { input: "111111", result: ["111111"] },
+  { input: "a11111", result: ["11111"] },
+  { input: "a", result: ["a"] },
+  { input: "ac", result: ["a", "c"] },
+  { input: "babad", result: ["bab", "aba"] },
+  { input: "ccc", result: ["ccc"] },
+  { input: "johnabbazz", result: ["abba"] },
+  { input: "johnabazyz", result: ["aba"] },
+  { input: "johnabcbazyz", result: ["abcba"] },
+  { input: "johnabbazyz", result: ["abba"] },
+  { input: "bbdzyx", result: ["bb"] },
+  { input: "zyxjj", result: ["jj"] },
+  { input: "zyxojjo", result: ["ojjo"] },
+  { input: "abvba", result: ["abvba"] },
+  { input: "aabbbaa", result: ["aabbbaa"] },
+  { input: "aabbaa", result: ["aabbaa"] },
   {
     input: "aaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeeeffffffffffgggggggggghhhhhhhhhhiiiiiiiiiijjjjjjjjjjkkkkkkkkkkllllllllllmmmmmmmmmmnnnnnnnnnnooooooooooppppppppppqqqqqqqqqqrrrrrrrrrrssssssssssttttttttttuuuuuuuuuuvvvvvvvvvvwwwwwwwwwwxxxxxxxxxxyyyyyyyyyyzzzzzzzzzzyyyyyyyyyyxxxxxxxxxxwwwwwwwwwwvvvvvvvvvvuuuuuuuuuuttttttttttssssssssssrrrrrrrrrrqqqqqqqqqqppppppppppoooooooooonnnnnnnnnnmmmmmmmmmmllllllllllkkkkkkkkkkjjjjjjjjjjiiiiiiiiiihhhhhhhhhhggggggggggffffffffffeeeeeeeeeeddddddddddccccccccccbbbbbbbbbbaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeeeffffffffffgggggggggghhhhhhhhhhiiiiiiiiiijjjjjjjjjjkkkkkkkkkkllllllllllmmmmmmmmmmnnnnnnnnnnooooooooooppppppppppqqqqqqqqqqrrrrrrrrrrssssssssssttttttttttuuuuuuuuuuvvvvvvvvvvwwwwwwwwwwxxxxxxxxxxyyyyyyyyyyzzzzzzzzzzyyyyyyyyyyxxxxxxxxxxwwwwwwwwwwvvvvvvvvvvuuuuuuuuuuttttttttttssssssssssrrrrrrrrrrqqqqqqqqqqppppppppppoooooooooonnnnnnnnnnmmmmmmmmmmllllllllllkkkkkkkkkkjjjjjjjjjjiiiiiiiiiihhhhhhhhhhggggggggggffffffffffeeeeeeeeeeddddddddddccccccccccbbbbbbbbbbaaaa",
     result: ["aaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeeeffffffffffgggggggggghhhhhhhhhhiiiiiiiiiijjjjjjjjjjkkkkkkkkkkllllllllllmmmmmmmmmmnnnnnnnnnnooooooooooppppppppppqqqqqqqqqqrrrrrrrrrrssssssssssttttttttttuuuuuuuuuuvvvvvvvvvvwwwwwwwwwwxxxxxxxxxxyyyyyyyyyyzzzzzzzzzzyyyyyyyyyyxxxxxxxxxxwwwwwwwwwwvvvvvvvvvvuuuuuuuuuuttttttttttssssssssssrrrrrrrrrrqqqqqqqqqqppppppppppoooooooooonnnnnnnnnnmmmmmmmmmmllllllllllkkkkkkkkkkjjjjjjjjjjiiiiiiiiiihhhhhhhhhhggggggggggffffffffffeeeeeeeeeeddddddddddccccccccccbbbbbbbbbbaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeeeffffffffffgggggggggghhhhhhhhhhiiiiiiiiiijjjjjjjjjjkkkkkkkkkkllllllllllmmmmmmmmmmnnnnnnnnnnooooooooooppppppppppqqqqqqqqqqrrrrrrrrrrssssssssssttttttttttuuuuuuuuuuvvvvvvvvvvwwwwwwwwwwxxxxxxxxxxyyyyyyyyyyzzzzzzzzzzyyyyyyyyyyxxxxxxxxxxwwwwwwwwwwvvvvvvvvvvuuuuuuuuuuttttttttttssssssssssrrrrrrrrrrqqqqqqqqqqppppppppppoooooooooonnnnnnnnnnmmmmmmmmmmllllllllllkkkkkkkkkkjjjjjjjjjjiiiiiiiiiihhhhhhhhhhggggggggggffffffffffeeeeeeeeeeddddddddddccccccccccbbbbbbbbbbaaaa"],
@@ -32,13 +41,13 @@ test_cases = [
   {
     input: "1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
     result: ["1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"]
-  }
-  # {
-  #   input: "rgczcpratwyqxaszbuwwcadruayhasynuxnakpmsyhxzlnxmdtsqqlmwnbxvmgvllafrpmlfuqpbhjddmhmbcgmlyeypkfpreddyencsdmgxysctpubvgeedhurvizgqxclhpfrvxggrowaynrtuwvvvwnqlowdihtrdzjffrgoeqivnprdnpvfjuhycpfydjcpfcnkpyujljiesmuxhtizzvwhvpqylvcirwqsmpptyhcqybstsfgjadicwzycswwmpluvzqdvnhkcofptqrzgjqtbvbdxylrylinspncrkxclykccbwridpqckstxdjawvziucrswpsfmisqiozworibeycuarcidbljslwbalcemgymnsxfziattdylrulwrybzztoxhevsdnvvljfzzrgcmagshucoalfiuapgzpqgjjgqsmcvtdsvehewrvtkeqwgmatqdpwlayjcxcavjmgpdyklrjcqvxjqbjucfubgmgpkfdxznkhcejscymuildfnuxwmuklntnyycdcscioimenaeohgpbcpogyifcsatfxeslstkjclauqmywacizyapxlgtcchlxkvygzeucwalhvhbwkvbceqajstxzzppcxoanhyfkgwaelsfdeeviqogjpresnoacegfeejyychabkhszcokdxpaqrprwfdahjqkfptwpeykgumyemgkccynxuvbdpjlrbgqtcqulxodurugofuwzudnhgxdrbbxtrvdnlodyhsifvyspejenpdckevzqrexplpcqtwtxlimfrsjumiygqeemhihcxyngsemcolrnlyhqlbqbcestadoxtrdvcgucntjnfavylip", result: ["qgjjgq"]
-  # },
-  # {
-  #   input: "ujtofmboiyyrjzbonysurqfxylvhuzzrzqwcjxibhawifptuammlxstcjmcmfvjuphyyfflkcbwimmpehqrqcdqxglqciduhhuhbjnwaaywofljhwzuqsnhyhahtkilwggineoosnqhdluahhkkbcwbupjcuvzlbzocgmkkyhhglqsvrxsgcglfisbzbawitbjwycareuhyxnbvounqdqdaixgqtljpxpyrccagrkdxsdtvgdjlifknczaacdwxropuxelvmcffiollbuekcfkxzdzuobkrgjedueyospuiuwyppgiwhemyhdjhadcabhgtkotqyneioqzbxviebbvqavtvwgyyrjhnlceyedhfechrbhugotqxkndwxukwtnfiqmstaadlsebfopixrkbvetaoycicsdndmztyqnaehnozchrakt", result: ["uhhu"]
-  # },
+  },
+  {
+    input: "rgczcpratwyqxaszbuwwcadruayhasynuxnakpmsyhxzlnxmdtsqqlmwnbxvmgvllafrpmlfuqpbhjddmhmbcgmlyeypkfpreddyencsdmgxysctpubvgeedhurvizgqxclhpfrvxggrowaynrtuwvvvwnqlowdihtrdzjffrgoeqivnprdnpvfjuhycpfydjcpfcnkpyujljiesmuxhtizzvwhvpqylvcirwqsmpptyhcqybstsfgjadicwzycswwmpluvzqdvnhkcofptqrzgjqtbvbdxylrylinspncrkxclykccbwridpqckstxdjawvziucrswpsfmisqiozworibeycuarcidbljslwbalcemgymnsxfziattdylrulwrybzztoxhevsdnvvljfzzrgcmagshucoalfiuapgzpqgjjgqsmcvtdsvehewrvtkeqwgmatqdpwlayjcxcavjmgpdyklrjcqvxjqbjucfubgmgpkfdxznkhcejscymuildfnuxwmuklntnyycdcscioimenaeohgpbcpogyifcsatfxeslstkjclauqmywacizyapxlgtcchlxkvygzeucwalhvhbwkvbceqajstxzzppcxoanhyfkgwaelsfdeeviqogjpresnoacegfeejyychabkhszcokdxpaqrprwfdahjqkfptwpeykgumyemgkccynxuvbdpjlrbgqtcqulxodurugofuwzudnhgxdrbbxtrvdnlodyhsifvyspejenpdckevzqrexplpcqtwtxlimfrsjumiygqeemhihcxyngsemcolrnlyhqlbqbcestadoxtrdvcgucntjnfavylip", result: ["qgjjgq"]
+  },
+  {
+    input: "ujtofmboiyyrjzbonysurqfxylvhuzzrzqwcjxibhawifptuammlxstcjmcmfvjuphyyfflkcbwimmpehqrqcdqxglqciduhhuhbjnwaaywofljhwzuqsnhyhahtkilwggineoosnqhdluahhkkbcwbupjcuvzlbzocgmkkyhhglqsvrxsgcglfisbzbawitbjwycareuhyxnbvounqdqdaixgqtljpxpyrccagrkdxsdtvgdjlifknczaacdwxropuxelvmcffiollbuekcfkxzdzuobkrgjedueyospuiuwyppgiwhemyhdjhadcabhgtkotqyneioqzbxviebbvqavtvwgyyrjhnlceyedhfechrbhugotqxkndwxukwtnfiqmstaadlsebfopixrkbvetaoycicsdndmztyqnaehnozchrakt", result: ["uhhu"]
+  },
 ]
 # rubocop:enable Layout/LineLength
 
@@ -75,11 +84,18 @@ class Solutions
   def self.expand(str)
     return str if str.length == 1
 
-    palindromes = []
+    result = nil
+    biggest_radius = 0
 
     # odd-length palindromes
     1.upto(str.length) do |pos|
       radius = 1
+
+      # putsif("pos:#{pos} biggest_radius:#{biggest_radius}")
+      if pos > (str.length - 1 - (biggest_radius))
+        # putsif "seen enough"
+        break
+      end
 
       loop do
         start_pos = pos - radius
@@ -87,20 +103,25 @@ class Solutions
         start_char = str[start_pos]
         end_char = str[end_pos]
 
-        putsif("[odd] pos:#{pos} radius:#{radius} start_pos:#{start_pos}(#{start_char}) end_pos:#{end_pos}(#{end_char}) #{str[start_pos..end_pos]}")
+        # putsif("  [odd] pos:#{pos} radius:#{radius} start_pos:#{start_pos}(#{start_char}) end_pos:#{end_pos}(#{end_char}) #{str[start_pos..end_pos]}")
 
         break if start_pos.negative?
         break unless start_char == end_char
 
-        putsif("...odd palindrome! #{str[start_pos..end_pos]}")
-        palindromes << str[start_pos..end_pos]
+        # putsif("...odd palindrome! #{str[start_pos..end_pos]}")
+        if radius > biggest_radius
+          result = str[start_pos..end_pos]
+          biggest_radius = radius
+        end
         radius += 1
       end
     end
 
     # even-length palindromes
-    0.upto(str.length) do |pos|
+    0.upto(str.length - biggest_radius) do |pos|
       radius = 1
+
+      break if pos > (str.length - 1 - (biggest_radius))
 
       loop do
         start_pos = pos - radius + 1
@@ -108,30 +129,31 @@ class Solutions
         start_char = str[start_pos]
         end_char = str[end_pos]
 
-        putsif("[even] pos:#{pos} radius:#{radius} start_pos:#{start_pos}(#{start_char}) end_pos:#{end_pos}(#{end_char}) #{str[start_pos..end_pos]}")
+        # putsif("  [even] pos:#{pos} radius:#{radius} start_pos:#{start_pos}(#{start_char}) end_pos:#{end_pos}(#{end_char}) #{str[start_pos..end_pos]}")
 
         break if start_pos.negative?
         break if end_pos >= str.length
         break unless start_char == end_char
 
-        putsif("...even palindrome! #{str[start_pos..end_pos]}")
-        palindromes << str[start_pos..end_pos]
+        # putsif("...even palindrome! #{str[start_pos..end_pos]}")
+        if radius > biggest_radius
+          result = str[start_pos..end_pos]
+          biggest_radius = radius
+        end
         radius += 1
       end
     end
 
-    return str[0] if palindromes.empty?
-
-    palindromes.max_by(&:length)
+    result || str[0]
   end
 
   # note: this works, but is (I guess) O(n^2) and does
   # not run quickly enough to be accepted by leetcode
   # correction: it's O(n^3)
-  def self.naive(str)
-    candidates = palindromic_substrings(str).
-      max_by(&:length)
-  end
+  # def self.naive(str)
+  #   candidates = palindromic_substrings(str).
+  #     max_by(&:length)
+  # end
 end
 
 def putsif(str)
