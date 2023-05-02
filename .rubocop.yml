@@ -16,6 +16,9 @@ AllCops:
   ExtraDetails: true
   NewCops: enable
 
+Naming/MethodParameterName
+  Enabled: false
+
 Naming/MemoizedInstanceVariableName:
   EnforcedStyleForLeadingUnderscores: optional
 
