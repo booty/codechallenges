@@ -68,7 +68,7 @@ class Solutions
         "pat_next_c:#{pat_next_c}(#{pat_next_type}) "
 
       if pat_current_type == :zero_or_more
-        raise "#{debug_string} unexpected #{pat_current_c} at bos"
+        raise "#{debug_string} unexpected #{pat_current_c}"
       end
 
       case [pat_current_type, pat_next_type]
@@ -77,8 +77,8 @@ class Solutions
       when [:literal, :zero_or_more]
         putsif "#{debug_string} should match one or more #{pat_current_c}"
         pat_pos += 1
-      when [:one_or_more, :one_or_more]
-        raise "#{debug_string} unexpected double operator"
+      # when [:one_or_more, :one_or_more]
+      #   raise "#{debug_string} unexpected double operator"
       else
         raise "#{debug_string} i'm so confused"
       end
@@ -86,30 +86,6 @@ class Solutions
       pat_pos += 1
     end
   end
-
-  # def self.naive(str, pat)
-  #   def type(chr)
-  #     return :dot if chr == "."
-  #     return :star if chr == "*"
-  #     return :letter if ("a".."z").include?(chr)
-  #     return :eos if chr.nil?
-
-  #     raise ArgumentError, "unrecognized pattern character: #{chr}"
-  #   end
-
-  #   # special easy case
-  #   unless str.include?(".") || str.include?("*")
-  #     return str == pat
-  #   end
-
-  #   pat_pos = 0
-  #   0.upto(str.length - 1) do |str_pos|
-  #     str_c = str[str_pos]
-  #     pat_c = pat[pat_pos]
-  #     pat_c_next = pat[pat_pos]
-
-  #   end
-  # end
 end
 
 test_cases = [
