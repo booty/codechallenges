@@ -16,7 +16,7 @@ AllCops:
   ExtraDetails: true
   NewCops: enable
 
-Naming/MethodParameterName
+Naming/MethodParameterName:
   Enabled: false
 
 Naming/MemoizedInstanceVariableName:
