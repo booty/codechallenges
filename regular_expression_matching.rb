@@ -21,7 +21,8 @@ require "benchmark/ips"
 #
 #   Input: s = "aa", p = "a*"
 #   Output: true
-#   Explanation: '*' means zero or more of the preceding element, 'a'. Therefore, by repeating 'a' once, it becomes "aa".
+#   Explanation: '*' means zero or more of the preceding element,
+#    'a'. Therefore, by repeating 'a' once, it becomes "aa".
 #
 # Example 3:
 #
@@ -31,7 +32,7 @@ require "benchmark/ips"
 
 BM_WARMUP_SECONDS = 0.5
 BM_TIME_SECONDS = 2
-DEBUG = true
+DEBUG = false
 
 def classify(c)
   case c
@@ -52,7 +53,7 @@ def match_zero_or_more(str, start_pos, match_char, stop_char)
   stop_char_equals_first_char = (str[pos] == stop_char)
   reps = 0
 
-  while (pos < str.length)
+  while pos < str.length
     reps += 1
     raise "too many reps" if reps > 25
 
@@ -60,7 +61,7 @@ def match_zero_or_more(str, start_pos, match_char, stop_char)
 
     putsif("   match_zero_or_more | pos:#{pos} c:#{c} match_char:#{match_char} stop_char:#{stop_char}")
 
-    unless c  # end of string
+    unless c # end of string
       putsif("     end of string")
       break
     end
@@ -68,7 +69,7 @@ def match_zero_or_more(str, start_pos, match_char, stop_char)
       putsif("     hit the stop char (#{c} == #{stop_char})")
       break
     end
-    unless (c == match_char) || (match_char==".")
+    unless (c == match_char) || (match_char == ".")
       putsif("     no match (#{c} != #{match_char})")
       break
     end
@@ -85,16 +86,37 @@ def match_zero_or_more(str, start_pos, match_char, stop_char)
   result
 end
 
-# 01234567890
-# mississippi
-
+def optimize_pattern(p)
+  start = p[0..1]
+  optimized = p.chars.uniq.join
+  optimized == start && start[0] != "." && start[1] == "*" ? optimized : p
+end
 
 class Solutions
-  # def self.cheat(str, pat)
-  #   !!(str =~ /\A#{pat}\Z/)
-  # end
+  def self.cheat(str, pat)
+    !!(str =~ /\A#{pat}\Z/)
+  end
 
-  def self.chunky(str, pat)
+  # Not my solution :-(
+  def self.match?(s, p, initial = true)
+    # special simple case
+    unless p.include?("*") || p.include?(".")
+      return s == p
+    end
+
+    p = optimize_pattern(p) if initial
+    return s.empty? if p.empty?
+
+    first = !s.empty? && [s[0], "."].include?(p[0])
+    if p.length >= 2 && p[1] == "*"
+      match?(s, p[2..], false) || (first && match?(s[1..], p, false))
+    else
+      first && match?(s[1..], p[1..], false)
+    end
+  end
+
+
+  def self.mine(str, pat)
     # special simple case
     unless pat.include?("*") || pat.include?(".")
       return str == pat
@@ -117,8 +139,8 @@ class Solutions
       #   "pat_next_c:#{pat_next_c}(#{pat_next_type}) "
 
       debug_string = "str_pos:#{str_pos}(#{str_current_c}) " \
-        "pat_pos:#{pat_pos}(#{pat_current_c}, #{pat_current_type}) " \
-        "pat_next:(#{pat_next_c}, #{pat_next_type})"
+                     "pat_pos:#{pat_pos}(#{pat_current_c}, #{pat_current_type}) " \
+                     "pat_next:(#{pat_next_c}, #{pat_next_type})"
 
       if pat_current_type == :zero_or_more
         raise "#{debug_string} unexpected #{pat_current_c}"
@@ -153,14 +175,14 @@ class Solutions
 end
 
 test_cases = [
-  # { input: "aaa", pattern: "a*a", result: true },
-  # { input: "john", pattern: "john", result: true },
-  # { input: "aa", pattern: "a", result: false },
-  # { input: "aa", pattern: "a*", result: true },
-  # { input: "ab", pattern: ".*", result: true },
-  # { input: "abc", pattern: ".*c", result: true },
+  { input: "aaa", pattern: "a*a", result: true },
+  { input: "john", pattern: "john", result: true },
+  { input: "aa", pattern: "a", result: false },
+  { input: "aa", pattern: "a*", result: true },
+  { input: "ab", pattern: ".*", result: true },
+  { input: "abc", pattern: ".*c", result: true },
   { input: "abc", pattern: ".*d", result: false },
-  # { input: "mississippi", pattern: "mis*is*ip*.", result: true },
+  { input: "mississippi", pattern: "mis*is*ip*.", result: true },
   { input: "aaa", pattern: "ab*a*c*a", result: true },
 ]
 
