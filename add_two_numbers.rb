@@ -3,55 +3,85 @@
 require "pry-byebug"
 require "benchmark/ips"
 
+# https://leetcode.com/problems/add-two-numbers/
+#
+# You are given two non-empty linked lists representing two
+# non-negative integers. The digits are stored in reverse
+# order, and each of their nodes contains a single digit.
+# Add the two numbers and return the sum as a linked list.
+#
+# Example 1:
+#   Input: l1 = [2,4,3], l2 = [5,6,4]
+#   Output: [7,0,8]
+#   Explanation: 342 + 465 = 807.
+#
+# Example 2:
+#   Input: l1 = [0], l2 = [0]
+#   Output: [0]
+#
+# Example 3:
+#   Input: l1 = [9,9,9,9,9,9,9], l2 = [9,9,9,9]
+#   Output: [8,9,9,9,0,0,0,1]
+#
+# You may assume the two numbers do not contain any leading zero, except the number 0 itself.
+
 BM_WARMUP_SECONDS = 0.5
 BM_TIME_SECONDS = 2
-DEBUG = true
+DEBUG = false
 
 class ListNode
   attr_accessor :val, :next
-
-  def to_s
-    result = []
-
-    current_node = self
-    loop do
-      result << "(#{current_node.val})"
-      break unless current_node.next
-
-      current_node = current_node.next
-    end
-
-    result.join("->")
-  end
-
-  def append(newval)
-    current_node = self
-
-    while current_node.next
-      current_node = current_node.next
-    end
-
-    puts "appending #{newval}"
-    current_node.next = ListNode.new(newval)
-  end
 
   def initialize(val = 0, _next = nil)
     @val = val
     @next = _next
   end
+
+  def self.from_array(s)
+    current_node = nil
+
+    s.reverse_each do |i|
+      new_node = ListNode.new(i, current_node)
+
+      current_node = new_node
+    end
+
+    current_node
+  end
 end
 
 class Solutions
-  
+  def self.chars(l1, l2)
+    pos = 0
+    sum = 0
+    p1 = l1
+    p2 = l2
 
-  def self.naive(l1, l2)
+    loop do
+      multiplier = 10**pos
+
+      n1 = p1 ? (p1.val * multiplier) : 0
+      n2 = p2 ? (p2.val * multiplier) : 0
+
+      sum += (n1 + n2)
+
+      pos += 1
+
+      p1 = p1.next if p1
+      p2 = p2.next if p2
+      break if p1.nil? && p2.nil?
+    end
+
+    sum.to_s.reverse.chars.map(&:to_i)
   end
 end
 
 test_cases = [
-  { input: "abc", reps: 3, result: "cbacbacba" },
-  { input: "hello", reps: 2, result: "olleholleh" },
-  { input: "hellohellohello", reps: 1, result: "olleholleholleh" },
+  { input: [[1, 2, 3], [1, 2, 3]], result: [2, 4, 6] },
+  { input: [[2, 4, 9], [5, 6, 4, 9]], result: [7, 0, 4, 0, 1] },
+  { input: [[2, 4, 3], [5, 6, 4]], result: [7, 0, 8] },
+  { input: [[9, 9, 9, 9, 9, 9, 9], [9, 9, 9, 9]], result: [8, 9, 9, 9, 0, 0, 0, 1] },
+  { input: [[0], [0]], result: [0] },
 ]
 
 def putsif(str)
@@ -78,7 +108,14 @@ Benchmark.ips do |bm|
     test_cases.each_with_index do |tcase, _tindex|
       print "  case #{tcase[:input]}"
 
-      work = lambda { Solutions.send(meth, tcase[:input], tcase[:reps]) }
+      work = lambda do
+        Solutions.send(
+          meth,
+          ListNode.from_array(tcase[:input][0]),
+          ListNode.from_array(tcase[:input][1]),
+        )
+      end
+
       actual_result = work.call
 
       if actual_result == tcase[:result]
