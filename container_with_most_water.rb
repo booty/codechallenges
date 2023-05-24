@@ -8,6 +8,34 @@ BM_TIME_SECONDS = 2
 DEBUG = true
 
 class Solutions
+  def self.move_inward(height)
+    left = 0
+    right = height.length - 1
+    solution = { left: nil, right: nil, volume: 0 }
+
+    while right > left
+      h_left = height[left]
+      h_right = height[right]
+      distance = right - left
+      volume = [h_left, h_right].min * distance
+      putsif "right:#{right} left:#{left} distance:#{distance} volume:#{volume}"
+
+      if volume > solution[:volume]
+        solution = { left:, right:, volume: }
+      end
+
+      if h_left <= h_right
+        left += 1
+      else
+        right -= 1
+      end
+    end
+
+    putsif solution
+
+    solution[:volume]
+  end
+
   def self.naive(height)
     solution = { index1: nil, index2: nil, volume: 0 }
     height.each_with_index do |h1, i1|
