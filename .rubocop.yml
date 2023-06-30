@@ -595,3 +595,6 @@ Style/HashTransformKeys:
 
 Style/HashTransformValues:
   Enabled: true
+
+Style/NumericPredicate:
+  Enabled: false
