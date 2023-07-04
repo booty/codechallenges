@@ -5,12 +5,14 @@
 require "pry-byebug"
 require "benchmark/ips"
 
-BM_WARMUP_SECONDS = 0.5
+BM_WARMUP_SECONDS = 1.5
 BM_TIME_SECONDS = 2
 
+# yeah, naughty
 $debug_only = ARGV.include? "--debugonly"
 $verbose = $debug_only
 
+# also naughty!
 class String
   def ellipsize(limit)
     return self if length <= limit
@@ -25,8 +27,11 @@ end
 
 class TestRunner
   def benchmark_label(method_name, test_case)
-    test_case[:label] ||
+    if test_case[:label]
+      "#{method_name}(#{test_case[:label]})"
+    else
       "#{method_name}(#{test_case.except(:result).values.join(',').ellipsize(15)})"
+    end
   end
 
   def result(is_correct, actual_result, expected_result)
