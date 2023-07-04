@@ -37,14 +37,37 @@ require_relative "testrunner"
 #
 
 class Solutions
+  def self.map(nums, target)
+    map = Array.new(nums.length)
+
+    nums.each_with_index do |num, i|
+      if (target-num).positive? && map[target-num]
+        # binding.pry
+        return [i, map[target-num]]
+      end
+      map[num] = i
+    end
+  end
+
+  # should be O(n) time?
+  def self.hashmap(nums, target)
+    map = {}
+
+    nums.each_with_index do |num, i|
+      if map[target-num]
+        return [i, map[target-num]]
+      end
+      map[num] = i
+    end
+  end
+
+  # obviously O(n^2) / 2ish, just wanted a baseline for fun
   def self.brute(nums, target)
     left = 0
     len = nums.length
     until left == len - 1
       (left + 1).upto(len - 1) do |right|
-        putsif "left:#{left}, right:#{right} [#{nums[left]},#{nums[right]}]"
         if nums[left] + nums[right] == target
-          putsif "  hooray!"
           return [left, right]
         end
       end
@@ -53,6 +76,9 @@ class Solutions
   end
 end
 
+
+shuffled_array_1k = (1..1000).to_a.shuffle
+shuffled_array_10k = (1..10_000).to_a.shuffle
 test_cases = [
   {
     params: [[3, 2, 4], 6],
@@ -69,13 +95,23 @@ test_cases = [
   {
     params: [(1..1000).to_a, 1999],
     result: [998, 999],
-    label: "1-10, sorted",
+    label: "1-1000",
     silent: true,
+  },
+  {
+    params: [shuffled_array_1k,3],
+    result: [shuffled_array_1k.index(1), shuffled_array_1k.index(2)],
+    label: "1K shuffled",
+  },
+  {
+    params: [shuffled_array_10k, 3],
+    result: [shuffled_array_10k.index(1), shuffled_array_10k.index(2)],
+    label: "10K shuffled",
   },
 ]
 
 TestRunner.new.run(
   solutions_klass: Solutions,
   test_cases:,
-  # custom_comparison: ->(a, b) { a.to_set == b.to_set },
+  custom_comparison: ->(a, b) { a.to_set == b.to_set },
 )
