@@ -47,7 +47,11 @@ class TestRunner
   def work_lambda(method_name, solutions_klass, tcase)
     -> {
       $verbose = false if tcase[:silent]
-      result = solutions_klass.send(method_name, *tcase[:params])
+      result = if tcase[:params].respond_to?(:call)
+                 solutions_klass.send(method_name, *tcase[:params].call)
+               else
+                 solutions_klass.send(method_name, *tcase[:params])
+               end
       $verbose = $debug_only
       result
     }
