@@ -52,11 +52,11 @@
 require_relative "testrunner"
 
 class Solutions
+  # About 10% faster than shifty
   def self.eachy(path)
-    parts = path.split("/")
     result = []
 
-    parts.each do |part|
+    path.split("/").each do |part|
       case part
       when ".", ""
         next
