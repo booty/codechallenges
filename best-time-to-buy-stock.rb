@@ -51,7 +51,6 @@ class Solutions
 
     max_price = 0
     (prices.length - 1).downto(0) do |day|
-      # putsif "  day:#{day} max_price:#{max_price}"
       max_price = prices[day] if prices[day] > max_price
 
       max_price_after_day_n[day] = max_price
