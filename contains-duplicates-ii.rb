@@ -33,14 +33,9 @@ class Solutions
     map = {}
 
     nums.each_with_index do |n, idx|
-      if map[n]
-        dist = idx - map[n].last
-        return true if dist <= k
+      return true if map[n] && idx - map[n] <= k
 
-        map[n] << idx
-      else
-        map[n] = [idx]
-      end
+      map[n] = idx
     end
 
     false
