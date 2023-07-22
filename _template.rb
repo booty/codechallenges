@@ -2,8 +2,6 @@
 
 require_relative "testrunner"
 
-DEBUG = true
-
 class Solutions
   def self.always_true(_n)
     true
@@ -25,4 +23,5 @@ TestRunner.new.run(
   solutions_klass: Solutions,
   test_cases:,
   # custom_comparison: ->(a, b) { a.to_set == b.to_set },
+  # label: "my friendly label",
 )
