@@ -32,24 +32,30 @@
 require_relative "testrunner"
 
 class Solutions
+  # O(n) time, 0(n) space
+  def self.mappy1pass(prices)
+    max_price = 0
+    max_profit = 0
+    (prices.length - 1).downto(1) do |day|
+      max_price = prices[day] if prices[day] > max_price
+
+      profit = max_price - prices[day - 1]
+      max_profit = profit if profit > max_profit
+    end
+    max_profit
+  end
+
   # O(2n) time, 0(2n) space
   def self.mappy(prices)
     max_price_after_day_n = Array.new(prices.length)
 
     max_price = 0
     (prices.length - 1).downto(0) do |day|
-      putsif "  day:#{day} max_price:#{max_price}"
+      # putsif "  day:#{day} max_price:#{max_price}"
       max_price = prices[day] if prices[day] > max_price
 
       max_price_after_day_n[day] = max_price
-
-      # TODO: we can actually just do the comparison here
-      # and eliminate the second loop, making it O(n) instead
-      # of 0(n^2)
-      # can also eliminate max_price_after_day_n
     end
-
-    putsif "max_price_after_day_n:#{max_price_after_day_n}"
 
     max_profit = 0
     prices.each_with_index do |price, day|
