@@ -45,40 +45,12 @@ end
 # def putsif(s); end
 
 class Solutions
-  def self.stolen(nums, index_diff, value_diff)
-    return false if index_diff.zero? || nums.empty?
-
-    buckets = {}
-    width = value_diff + 1
-
-    nums.each_with_index do |num, i|
-      bucket_index = num / width
-
-      return true if buckets.key?(bucket_index) ||
-                     buckets.key?(bucket_index - 1) && (num - buckets[bucket_index - 1]).abs <= value_diff ||
-                     buckets.key?(bucket_index + 1) && (num - buckets[bucket_index + 1]).abs <= value_diff
-
-      buckets[bucket_index] = num
-      buckets.delete(nums[i - index_diff] / width) if i >= index_diff
-    end
-
-    false
-  end
-
+  # accepted, O(n)
   def self.buckets(nums, index_diff, value_diff)
     buckets = {}
 
-    putsif("nums:#{nums} index_diff:#{index_diff} value_diff:#{value_diff}")
     nums.each_with_index do |num, i|
-      # raise "max iterations reached" if i > MAX_ITERATIONS
-
-      # figure out the bucket number for num
-      # the bucket number is based on the index
-      # the search window will therefore cover
-      # the current bucket and the previous bucket
       bucket_number = bucket_number(num, value_diff)
-
-      # putsif("  num:#{num} i:#{i} bucket_number:#{bucket_number} buckets:#{buckets}")
 
       return true if buckets.key?(bucket_number)
 
@@ -101,27 +73,27 @@ class Solutions
   end
 
   # time exceeded, O(n^2) or O(n^3)
-  # def self.hash_of_sets(nums, index_diff, value_diff)
-  #   map = {}
+  def self.hash_of_sets(nums, index_diff, value_diff)
+    map = {}
 
-  #   nums.each_with_index do |num, idx|
-  #     # putsif "idx:#{idx} num:#{num} map:#{map}"
+    nums.each_with_index do |num, idx|
+      # putsif "idx:#{idx} num:#{num} map:#{map}"
 
-  #     (num - value_diff).upto(num + value_diff) do |other_num|
-  #       next unless map[other_num]
+      (num - value_diff).upto(num + value_diff) do |other_num|
+        next unless map[other_num]
 
-  #       return true if map[other_num].detect { |other_idx| (idx - other_idx) <= index_diff }
-  #     end
+        return true if map[other_num].detect { |other_idx| (idx - other_idx) <= index_diff }
+      end
 
-  #     if map[num]
-  #       map[num] << idx
-  #     else
-  #       map[num] = [idx]
-  #     end
-  #   end
+      if map[num]
+        map[num] << idx
+      else
+        map[num] = [idx]
+      end
+    end
 
-  #   false
-  # end
+    false
+  end
 end
 
 def bigarray
