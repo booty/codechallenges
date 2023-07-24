@@ -76,6 +76,18 @@ class Solutions
     end
     result
   end
+
+  # borrowed from https://leetcode.com/problems/adding-spaces-to-a-string/solutions/3128035/sort-and-reverse-the-array-then-just-loop-through-and-insert-the-spaces-at-the-index/
+  # several times faster than prealloc for small strings
+  # but much slower for large strings and/or lots of spaces
+  def self.borrowed(s, spaces)
+    dup = s.dup
+    a = spaces.reverse
+    a.each do |i|
+      dup.insert(i, " ")
+    end
+    dup
+  end
 end
 
 test_cases = [
