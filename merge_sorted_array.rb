@@ -55,15 +55,10 @@ class Solutions
       nums1_val = nums1[nums1_read_pointer]
       nums2_val = nums2[nums2_read_pointer]
 
-      # putsif "write_pointer:#{write_pointer} nums1_val:#{nums1_val}, nums2_val:#{nums2_val} nums1_read_pointer:#{nums1_read_pointer} nums2_read_pointer:#{nums2_read_pointer}"
-
       nums1[write_pointer] = if nums1_read_pointer == -1
                                nums2_read_pointer -= 1
                                nums2_val
-                             elsif nums2_read_pointer == -1
-                               nums1_read_pointer -= 1
-                               nums1_val
-                             elsif nums1_val > nums2_val
+                             elsif nums2_read_pointer == -1 || (nums1_val > nums2_val)
                                nums1_read_pointer -= 1
                                nums1_val
                              else
