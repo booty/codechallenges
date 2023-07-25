@@ -75,6 +75,17 @@ class Password
     steps = 0
 
     putsif "-- begin (#{password_string}) --"
+
+    if old_length < MIN_LENGTH
+      0.upto(MIN_LENGTH - old_length - 1) do
+        new_c = give_me_a_character(stats:, output_string:)
+        putsif "    prepending #{new_c} because string too short"
+        steps += 1
+        stats[character_class_of(char: new_c)] += 1
+        output_string << new_c
+      end
+    end
+
     0.upto(old_length - 1) do |old_index|
       char = password_string[old_index]
       old_char_class = character_class_of(char:)
@@ -124,15 +135,7 @@ class Password
       putsif "    output_string:#{output_string.join}"
     end
 
-    if output_string.length < MIN_LENGTH
-      0.upto(MIN_LENGTH - output_string.length - 1) do
-        new_c = give_me_a_character(stats:, output_string:)
-        putsif "    appending #{new_c} to the end because string too short"
-        steps += 1
-        stats[character_class_of(char: new_c)] += 1
-        output_string << new_c
-      end
-    end
+
 
     putsif "-- end (output_string:#{output_string.join}, steps:#{steps}) --"
     steps
