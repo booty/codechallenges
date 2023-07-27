@@ -39,34 +39,171 @@ require_relative "testrunner"
 #     password consists of letters, digits, dot '.' or
 #     exclamation mark '!'.
 
-require_relative "strong_password_checker_password"
+# require_relative "strong_password_checker_password"
 
 class Solutions
   def self.first(password)
-    Password.new(password).make_strong_2pass!
+    upper_needed = 1
+    lower_needed = 1
+    digit_needed = 1
+    other_count = 0
+    triples = 0
+    changes = 0
+    previous_c = nil
+    consecutive = 0
+
+    putsif "--- begin (#{password} len:#{password.length}) ---"
+
+    password.chars.each_with_index do |c, i|
+      case c
+      when "A".."Z"
+        upper_needed = 0
+      when "a".."z"
+        lower_needed = 0
+      when "0".."9"
+        digit_needed = 0
+      else
+        other_count += 1
+      end
+
+      # putsif "c:#{c} i:#{i} consecutive:#{consecutive}"
+
+      if c == previous_c
+        consecutive += 1
+        # putsif "  consecutive now #{consecutive}"
+        if consecutive == 2
+          # putsif "  it's a triple"
+          triples += 1
+          previous_c = nil
+          consecutive = 0
+        else
+          previous_c = c
+        end
+      else
+        previous_c = c
+        consecutive = 0
+      end
+    end
+
+    char_classes_needed = upper_needed + lower_needed + digit_needed
+
+    putsif "char_classes_needed:#{char_classes_needed} triples:#{triples}"
+
+    # The most "efficient" thing we can do is add a character.
+    # This can kill 1, 2, or 3 birds with one stone because it can provide missing
+    # length and/or break up a triplet and/or provide a missing character class
+    # ex: AA111 (1 triplet, 1 character classes needed, 1 missing character)
+    #     could become (1 change)
+    #     AA1a11 (0 triples, 0 character classes needed, 0 missing character)
+    # ex: .!. (0 triples, 3 character classes needed, 3 missing character)
+    #     could become (3 changes)
+    #     .!.aA1 (0 triples, 0 character classes needed, 0 missing characters)
+    if (missing_length = (6 - password.length)).positive?
+      char_classes_needed -= missing_length
+      char_classes_needed = 0 if char_classes_needed.negative?
+      triples -= missing_length
+      triples = 0 if triples.negative?
+
+      changes += missing_length
+      putsif "added #{missing_length} missing length"
+      putsif "   now: char_classes_needed:#{char_classes_needed} triples:#{triples} changes:#{changes}"
+    end
+
+    # If the string is too long, we can kill two birds with one stone
+    # and delete characters that will break up the triples
+    # ex: 01234567890123456AAAaaa (2 triples, 22 characters)
+    #     could become (2 changes)
+    #     01234567890123456AAaa (0 triples, 20 characters)
+    #
+    # TODO:
+    #
+    # Not all triples can be fixed by deletion.
+    # ex: aaaaaaaaaaaaaaaaaaaaa (23 characters, 7 triples)
+    #     could become (3 changes)
+    #     aaaaaaaaaaaaaaaaaa (20 characters, 6 triples)
+    #     we delete 3 characters, but we have only reduced triples by 1
+    if (extra_length = (password.length - 20)).positive?
+      triples -= extra_length
+      triples = 0 if triples.negative?
+
+      changes += extra_length
+      putsif "deleted #{extra_length} extra_length"
+      putsif "   now: char_classes_needed:#{char_classes_needed} triples:#{triples} changes:#{changes}"
+    end
+
+    # If we have remaining triples, break them up
+    if triples.positive?
+      char_classes_needed -= triples
+      char_classes_needed = 0 if char_classes_needed.negative?
+
+      putsif "need to fix #{triples} triples"
+      changes += triples
+      triples = 0
+      putsif "  now: char_classes_needed:#{char_classes_needed} triples:#{triples} changes:#{changes}"
+    end
+
+    # If we have remaining triples we can break
+    # them up by changing characters to provided needed classes
+    # ex: 000111222 (3 triples, 2 needed char classes)
+    #     could become (2 changes)
+    #     000A11a22 (1 triple, 0 needed char classes)
+    # ex: ...!!! (2 triples, 3 needed char classes)
+    #     could become (3 changes)
+    #     aA.1!! (0 triples, 0 needed char classes)
+    if char_classes_needed.positive?
+      triples -= char_classes_needed
+      triples = 0 if triples.negative?
+
+      putsif "will change #{char_classes_needed} to provide missing classes"
+      changes += char_classes_needed
+      char_classes_needed = 0
+      putsif "   now: char_classes_needed:#{char_classes_needed} triples:#{triples} changes:#{changes}"
+    end
+
+    changes
   end
 end
 
 test_cases = [
-  # {
-  #   params: ["a"],
-  #   result: 5,
-  # },
-  # {
-  #   params: ["aA1"],
-  #   result: 3,
-  # },
-  # {
-  #   params: ["1337C0d3"],
-  #   result: 0,
-  # },
-  # {
-  #   params: ["z"],
-  #   result: 5,
-  # },
+  {
+    params: ["a"],
+    result: 5,
+  },
+  {
+    params: ["aA1"],
+    result: 3,
+  },
+  {
+    params: ["1337C0d3"],
+    result: 0,
+  },
+  {
+    params: ["z"],
+    result: 5,
+  },
   {
     params: ["aa123"],
     result: 1,
+  },
+  {
+    params: ["aaaB1"],
+    result: 1,
+  },
+  {
+    params: ["aaa111"],
+    result: 2,
+  },
+  {
+    params: ["aaAA11"],
+    result: 0,
+  },
+  {
+    params: ["1111111111"],
+    result: 3,
+  },
+  {
+    params: ["bbaaaaaaaaaaaaaaacccccc"],
+    result: 8,
   },
 ]
 
