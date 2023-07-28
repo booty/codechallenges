@@ -40,7 +40,7 @@ class ListNode
     @next = _next
   end
 
-  def self.array_to_list(ary)
+  def self.from_array(ary)
     head = nil
     previous = nil
     ary.reverse_each do |i|
@@ -49,53 +49,69 @@ class ListNode
     end
     head
   end
-end
 
-class Solutions
-  def self.first(list1, list2)
-    list1_pointer = 0
-    list2_pointer = 0
+  def to_a
     result = []
-
-    while list1_pointer < list1.length || list2_pointer < list2.length
-      list1_val = list1[list1_pointer]
-      list2_val = list2[list2_pointer]
-
-      # putsif "list1_pointer:#{list1_pointer} list1_val:#{list1_val} list2_pointer:#{list2_pointer} list2_val:#{list2_val}"
-      result << if list1_val.nil?
-                  list2_pointer += 1
-                  # puts "  chose from list2 because list1 empty"
-                  list2_val
-                elsif list2_val.nil?
-                  list1_pointer += 1
-                  # puts "  chose from list1 because list2 empty"
-                  list1_val
-                elsif list2_val < list1_val
-                  list2_pointer += 1
-                  # puts "  chose from list2 because #{list2_val} < #{list1_val}"
-                  list2_val
-                else
-                  list1_pointer += 1
-                  # puts "  chose from list2 because #{list1_val} <= #{list2_val}"
-                  list1_val
-                end
-      # putsif "  list1_val:#{list1_val} list2_val:#{list2_val} result:#{result}"
+    pointer = self
+    while pointer
+      result << pointer.val
+      pointer = pointer.next
     end
     result
   end
 end
 
+class Solutions
+  def self.first(list1, list2)
+    p1 = list1
+    p2 = list2
+    merged_head = nil
+    merged_tail = nil
+
+    while p1 || p2
+      result = nil
+      if p1.nil? || (p2 && p2.val < p1.val)
+        result = p2.val
+        p2 = p2.next
+      else
+        result = p1.val
+        p1 = p1.next
+      end
+
+      new_node = ListNode.new(result)
+
+      if merged_head
+        merged_tail.next = new_node
+      else
+        merged_head = new_node
+      end
+      merged_tail = new_node
+    end
+
+    merged_head
+  end
+end
+
 test_cases = [
   {
-    params: [[1, 2, 4], [1, 3, 4]],
+    params: [
+      ListNode.from_array([1, 2, 4]),
+      ListNode.from_array([1, 3, 4]),
+    ],
     result: [1, 1, 2, 3, 4, 4],
   },
   {
-    params: [[], []],
+    params: [
+      ListNode.from_array([]),
+      ListNode.from_array([]),
+    ],
     result: [],
   },
   {
-    params: [[], [0]],
+    params: [
+      ListNode.from_array([]),
+      ListNode.from_array([0]),
+    ],
     result: [0],
   },
 ]
@@ -103,8 +119,7 @@ test_cases = [
 TestRunner.new.run(
   solutions_klass: Solutions,
   test_cases:,
-  # custom_comparison: ->(actual_result, expected_result) {
-  #   actual_result.to_set == expected_result.to_set
-  # },
-  # label: "my friendly label",
+  custom_comparison: ->(actual_result, expected_result) {
+    actual_result.to_a == expected_result
+  },
 )
