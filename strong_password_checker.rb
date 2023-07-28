@@ -48,9 +48,10 @@ class Solutions
     digit_needed = 1
     other_count = 0
     triples = 0
+    triples_fixable_by_deletion = 0
     changes = 0
     previous_c = nil
-    consecutive = 0
+    consecutive = 1
 
     putsif "--- begin (#{password} len:#{password.length}) ---"
 
@@ -66,23 +67,21 @@ class Solutions
         other_count += 1
       end
 
-      # putsif "c:#{c} i:#{i} consecutive:#{consecutive}"
+      consecutive += 1 if c == previous_c
 
-      if c == previous_c
-        consecutive += 1
-        # putsif "  consecutive now #{consecutive}"
-        if consecutive == 2
-          # putsif "  it's a triple"
-          triples += 1
-          previous_c = nil
-          consecutive = 0
-        else
-          previous_c = c
+      # we've reached the end of a run because we hit a mismatch OR end of string
+      if (c != previous_c) || i == (password.length - 1)
+        putsif "  hit the end of a streak consecutive:#{consecutive}"
+        if consecutive >= 3
+          triples += consecutive / 3
+          triples_fixable_by_deletion += 1
+          putsif "   now: triples:#{triples} " \
+                 "changes:#{changes} triples_fixable_by_deletion:#{triples_fixable_by_deletion}"
         end
-      else
-        previous_c = c
-        consecutive = 0
+        consecutive = 1
       end
+
+      previous_c = c
     end
 
     char_classes_needed = upper_needed + lower_needed + digit_needed
@@ -106,7 +105,8 @@ class Solutions
 
       changes += missing_length
       putsif "added #{missing_length} missing length"
-      putsif "   now: char_classes_needed:#{char_classes_needed} triples:#{triples} changes:#{changes}"
+      putsif "   now: char_classes_needed:#{char_classes_needed} triples:#{triples} " \
+             "changes:#{changes} triples_fixable_by_deletion:#{triples_fixable_by_deletion}"
     end
 
     # If the string is too long, we can kill two birds with one stone
@@ -123,23 +123,13 @@ class Solutions
     #     aaaaaaaaaaaaaaaaaa (20 characters, 6 triples)
     #     we delete 3 characters, but we have only reduced triples by 1
     if (extra_length = (password.length - 20)).positive?
-      triples -= extra_length
+      triples -= [extra_length, triples_fixable_by_deletion].min
       triples = 0 if triples.negative?
 
       changes += extra_length
       putsif "deleted #{extra_length} extra_length"
-      putsif "   now: char_classes_needed:#{char_classes_needed} triples:#{triples} changes:#{changes}"
-    end
-
-    # If we have remaining triples, break them up
-    if triples.positive?
-      char_classes_needed -= triples
-      char_classes_needed = 0 if char_classes_needed.negative?
-
-      putsif "need to fix #{triples} triples"
-      changes += triples
-      triples = 0
-      putsif "  now: char_classes_needed:#{char_classes_needed} triples:#{triples} changes:#{changes}"
+      putsif "   now: char_classes_needed:#{char_classes_needed} triples:#{triples} " \
+             "changes:#{changes} triples_fixable_by_deletion:#{triples_fixable_by_deletion}"
     end
 
     # If we have remaining triples we can break
@@ -157,7 +147,20 @@ class Solutions
       putsif "will change #{char_classes_needed} to provide missing classes"
       changes += char_classes_needed
       char_classes_needed = 0
-      putsif "   now: char_classes_needed:#{char_classes_needed} triples:#{triples} changes:#{changes}"
+      putsif "   now: char_classes_needed:#{char_classes_needed} triples:#{triples} " \
+             "changes:#{changes} triples_fixable_by_deletion:#{triples_fixable_by_deletion}"
+    end
+
+    # If we have remaining triples, break them up
+    if triples.positive?
+      char_classes_needed -= triples
+      char_classes_needed = 0 if char_classes_needed.negative?
+
+      putsif "need to fix #{triples} triples"
+      changes += triples
+      triples = 0
+      putsif "   now: char_classes_needed:#{char_classes_needed} triples:#{triples} " \
+             "changes:#{changes} triples_fixable_by_deletion:#{triples_fixable_by_deletion}"
     end
 
     changes
@@ -204,6 +207,10 @@ test_cases = [
   {
     params: ["bbaaaaaaaaaaaaaaacccccc"],
     result: 8,
+  },
+  {
+    params: ["FFFFFFFFFFFFFFF11111111111111111111AAA"],
+    result: 23,
   },
 ]
 
