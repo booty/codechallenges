@@ -22,6 +22,8 @@ test_cases = [
 TestRunner.new.run(
   solutions_klass: Solutions,
   test_cases:,
-  # custom_comparison: ->(a, b) { a.to_set == b.to_set },
+  # custom_comparison: ->(actual_result, expected_result) {
+  #   actual_result.to_set == expected_result.to_set
+  # },
   # label: "my friendly label",
 )
