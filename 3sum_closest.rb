@@ -31,9 +31,9 @@ require_relative "testrunner"
 #     -1000 <= nums[i] <= 1000
 #     -104 <= target <= 104
 
-def two_sum_closest(sorted_nums, target)
-  lpointer = 0
-  rpointer = sorted_nums.length - 1
+def two_sum_closest(sorted_nums, start_index, end_index, target)
+  lpointer = start_index
+  rpointer = end_index
   winner = nil
   winner_distance = nil
 
@@ -42,24 +42,15 @@ def two_sum_closest(sorted_nums, target)
     candidate_sum = candidate.sum
     distance = (target - candidate_sum).abs
 
-    # putsif "target:#{target} lpointer:#{lpointer} rpointer:#{rpointer} candidate:#{candidate} " \
-    #      "candidate_sum:#{candidate_sum} distance:#{distance} winner:#{winner} " \
-    #      "winner_distance:#{winner_distance}"
-
     return candidate if distance == 0
 
-    # if the distance is positive (candidate too small)
-    # move the left pointer
     if candidate_sum < target
       lpointer += 1
-      # putsif "  moving lpointer"
     else
       rpointer -= 1
-      # putsif "  moving rpointer"
     end
 
     if winner.nil? || (distance < winner_distance)
-      # putsif "  new winner"
       winner = candidate
       winner_distance = distance
     end
@@ -74,10 +65,8 @@ class Solutions
     sorted_nums_length = sorted_nums.length
     winner = nil
     winner_distance = nil
+    max_index = sorted_nums_length - 3
 
-    # putsif "----- start #{sorted_nums} -----"
-
-    temp_reps = 0
     # make a single pass through sorted_nums
     # for each n in sorted_nums, pass the remainder
     # of the list to #two_sum_closest
@@ -87,29 +76,26 @@ class Solutions
     sorted_nums.each_with_index do |num, index|
       distance = target - num
 
-      # putsif "  index:#{index} num:#{num} distance:#{distance}"
-
-      others = if index == (sorted_nums_length - 3)
+      others = if index == max_index
                  [sorted_nums[index + 1], sorted_nums[index + 2]]
-               elsif index < sorted_nums_length - 3
-                 slice = sorted_nums[index + 1..]
-                 # putsif "    passing to two_sum slice:#{slice}"
-                 two_sum_closest(slice, distance)
+               elsif index < max_index
+                 two_sum_closest(sorted_nums, index + 1, sorted_nums.length - 1, distance)
                end
 
       next unless others
 
-      candidate = [num] + others
-      candidate_distance = (target - candidate.sum).abs
-      # putsif "    candidate:#{candidate} candidate_distance:#{candidate_distance}"
+      candidate = [num, others[0], others[1]]
+      candidate_sum = candidate.sum
+      return candidate_sum if candidate_sum == target
 
-      if winner.nil? || (candidate_distance.abs < winner_distance.abs)
+      candidate_distance = (target - candidate_sum).abs
+
+      if winner.nil? || (candidate_distance < winner_distance)
         winner = candidate
         winner_distance = candidate_distance
       end
     end
 
-    # putsif "----- end (winner:#{winner} winner.sum:#{winner.sum} -----"
     winner.sum
   end
 end
