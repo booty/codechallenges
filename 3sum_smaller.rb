@@ -57,13 +57,13 @@ def two_sum_smaller(sorted_nums:, target:, start_index:, end_index:)
     j = sorted_nums[rpointer]
     sum = i + j
 
-    putsif "lpointer:#{lpointer}(#{i}) rpointer:#{rpointer}(#{j}) sum:#{sum} winner_count:#{winner_count}"
+    # putsif "lpointer:#{lpointer}(#{i}) rpointer:#{rpointer}(#{j}) sum:#{sum} winner_count:#{winner_count}"
     if sum >= target
-      putsif "  sum too big; we'll move rpointer"
+      # putsif "  sum too big; we'll move rpointer"
       rpointer -= 1
     else
       winner_count += rpointer - lpointer
-      putsif "  success, there must be #{rpointer - lpointer} winners"
+      # putsif "  success, there must be #{rpointer - lpointer} winners"
       lpointer += 1
     end
   end
@@ -99,6 +99,10 @@ class Solutions
 end
 
 test_cases = [
+  {
+    params: [[0, -4, -1, 1, -1, 2], -5],
+    result: 1,
+  },
   {
     params: [[-2, 0, 1, 3], 2],
     result: 2,
