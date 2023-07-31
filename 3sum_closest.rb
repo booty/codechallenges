@@ -39,26 +39,27 @@ def two_sum_closest(sorted_nums, target)
 
   while rpointer > lpointer
     candidate = [sorted_nums[lpointer], sorted_nums[rpointer]]
-    distance = target - candidate.sum
+    candidate_sum = candidate.sum
+    distance = (target - candidate_sum).abs
 
-    putsif "target:#{target} lpointer:#{lpointer} rpointer:#{rpointer} candidate:#{candidate} " \
-         "candidate.sum:#{candidate.sum} distance:#{distance} winner:#{winner} " \
-         "winner_distance:#{winner_distance}"
+    # putsif "target:#{target} lpointer:#{lpointer} rpointer:#{rpointer} candidate:#{candidate} " \
+    #      "candidate_sum:#{candidate_sum} distance:#{distance} winner:#{winner} " \
+    #      "winner_distance:#{winner_distance}"
 
     return candidate if distance == 0
 
     # if the distance is positive (candidate too small)
     # move the left pointer
-    if candidate.sum < target
+    if candidate_sum < target
       lpointer += 1
-      putsif "  moving lpointer"
+      # putsif "  moving lpointer"
     else
       rpointer -= 1
-      putsif "  moving rpointer"
+      # putsif "  moving rpointer"
     end
 
-    if winner.nil? || (distance.abs < winner_distance.abs)
-      putsif "  new winner"
+    if winner.nil? || (distance < winner_distance)
+      # putsif "  new winner"
       winner = candidate
       winner_distance = distance
     end
@@ -70,10 +71,11 @@ end
 class Solutions
   def self.sorted_nums(nums, target)
     sorted_nums = nums.sort
+    sorted_nums_length = sorted_nums.length
     winner = nil
     winner_distance = nil
 
-    putsif "----- start #{sorted_nums} -----"
+    # putsif "----- start #{sorted_nums} -----"
 
     temp_reps = 0
     # make a single pass through sorted_nums
@@ -83,28 +85,23 @@ class Solutions
     # if a trio exactly matches the target we can return
     # early
     sorted_nums.each_with_index do |num, index|
-      temp_reps += 1
-      raise "whoa" if temp_reps > 10
-
       distance = target - num
 
-      putsif "  index:#{index} num:#{num} distance:#{distance}"
+      # putsif "  index:#{index} num:#{num} distance:#{distance}"
 
-      others = if index == (sorted_nums.length - 3)
+      others = if index == (sorted_nums_length - 3)
                  [sorted_nums[index + 1], sorted_nums[index + 2]]
-               elsif index < sorted_nums.length - 3
+               elsif index < sorted_nums_length - 3
                  slice = sorted_nums[index + 1..]
-                 putsif "    passing to two_sum slice:#{slice}"
+                 # putsif "    passing to two_sum slice:#{slice}"
                  two_sum_closest(slice, distance)
                end
 
       next unless others
 
-      putsif "    others:#{others}"
-
       candidate = [num] + others
       candidate_distance = (target - candidate.sum).abs
-      putsif "    candidate:#{candidate} candidate_distance:#{candidate_distance}"
+      # putsif "    candidate:#{candidate} candidate_distance:#{candidate_distance}"
 
       if winner.nil? || (candidate_distance.abs < winner_distance.abs)
         winner = candidate
@@ -112,7 +109,7 @@ class Solutions
       end
     end
 
-    putsif "----- end (winner:#{winner} winner.sum:#{winner.sum} -----"
+    # putsif "----- end (winner:#{winner} winner.sum:#{winner.sum} -----"
     winner.sum
   end
 end
