@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "testrunner"
+require_relative "common/testrunner"
 
 shuffled_array_1k = (1..1000).to_a.shuffle
 shuffled_array_10k = (1..10_000).to_a.shuffle

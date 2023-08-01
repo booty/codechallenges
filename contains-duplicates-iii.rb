@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "testrunner"
+require_relative "common/testrunner"
 
 # You are given an integer array nums and two integers indexDiff and valueDiff.
 #

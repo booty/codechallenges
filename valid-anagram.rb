@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "testrunner"
+require_relative "common/testrunner"
 
 class Solutions
   # While theoretically faster than #lazy_each_char in reality

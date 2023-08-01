@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "testrunner"
+require_relative "common/testrunner"
 
 # 21. Merge Two Sorted Lists (Easy)
 #

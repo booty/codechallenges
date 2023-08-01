@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "testrunner"
+require_relative "common/testrunner"
 
 # https://leetcode.com/problems/reverse-prefix-of-word/description/
 #

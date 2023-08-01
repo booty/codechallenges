@@ -49,7 +49,7 @@
 #     path consists of English letters, digits, period '.', slash '/' or '_'.
 #     path is a valid absolute Unix path.
 
-require_relative "testrunner"
+require_relative "common/testrunner"
 
 class Solutions
   # About 10% faster than shifty

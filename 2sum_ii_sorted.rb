@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "testrunner"
+require_relative "common/testrunner"
 
 # 167. Two Sum II - Input Array Is Sorted (Medium)
 #

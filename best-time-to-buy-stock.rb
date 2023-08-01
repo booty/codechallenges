@@ -29,7 +29,7 @@
 #     1 <= prices.length <= 105 0 <= prices[i] <= 104
 #
 
-require_relative "testrunner"
+require_relative "common/testrunner"
 
 class Solutions
   # O(n) time, 0(n) space
