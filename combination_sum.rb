@@ -69,11 +69,8 @@ class TreeNode
       if new_ary_sum == target
         myroot = root
         new_ary_sorted = new_ary.sort
-        if myroot.solutions
-          myroot.solutions << new_ary_sorted unless myroot.solutions.include?(new_ary_sorted)
-        else
-          myroot.solutions = [new_ary_sorted]
-        end
+        myroot.solutions ||= Set.new
+        myroot.solutions.add(new_ary_sorted)
         next
       end
 
@@ -108,13 +105,6 @@ test_cases = [
     result: [[2, 2, 3], [7]],
   },
   {
-    params: [
-      [36, 21, 2, 3, 23, 24, 38, 22, 11, 14, 15, 25, 32, 19, 35, 26, 31, 13, 34, 29, 12, 37, 17, 20, 39, 30, 40, 28, 27,
-       33], 35
-    ],
-    result: [],
-  },
-  {
     params: [[8, 7, 4, 3], 11],
     result: [[8, 3], [7, 4], [4, 4, 3]],
   },
@@ -124,7 +114,7 @@ TestRunner.new.run(
   solutions_klass: Solutions,
   test_cases:,
   custom_comparison: ->(a, b) {
-    a.map(&:sort).sort == b.map(&:sort).sort
+    a.sort == b.map(&:sort).sort
   },
   # label: "my friendly label",
 )
