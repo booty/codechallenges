@@ -6,7 +6,7 @@ require "pry-byebug"
 require "benchmark/ips"
 
 BM_WARMUP_SECONDS = 1.5
-BM_TIME_SECONDS = 2
+BM_TIME_SECONDS = ARGV.include?("--longrun") ? 10 : 2
 
 # yeah, naughty
 $debug_only = ARGV.include? "--debugonly"
