@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ListNode
   attr_accessor :val, :next
 
@@ -6,7 +8,7 @@ class ListNode
     @next = _next
   end
 
-  def self.from_array(ary)
+  def self.from_array(ary = [])
     head = nil
     prev = nil
     ary.each do |x|
@@ -42,8 +44,12 @@ class ListNode
     result
   end
 
-  def to_s
-    "(" + to_array.join(") → (") + ")"
+  def to_s(only: false)
+    sep = ") → ("
+    if only
+      "(#{val} next:#{self.next&.val})"
+    else
+      "(#{to_array.join(sep)})"
+    end
   end
 end
-
