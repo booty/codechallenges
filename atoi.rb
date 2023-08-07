@@ -11,6 +11,7 @@ class Integer
   def self.clamp(lower, upper)
     return lower if self < lower
     return upper if self > upper
+
     self
   end
 end
@@ -33,8 +34,8 @@ test_cases = [
 ]
 
 class Solutions
-  LOWER_CLAMP = 0 - 2**31
-  UPPER_CLAMP = 2**31 - 1
+  LOWER_CLAMP = 0 - (2**31)
+  UPPER_CLAMP = (2**31) - 1
 
   def self.cheat(s)
     num_start_pos = nil
@@ -49,19 +50,22 @@ class Solutions
       when "-"
         break if num_start_pos
         return 0 if got_sign
+
         negative = true
       when "+"
         break if num_start_pos
         return 0 if got_sign
+
         positive = true
       when "0".."9"
-        num_start_pos = i unless num_start_pos
+        num_start_pos ||= i
         num_end_pos = i
       when " "
         break if num_start_pos
         return 0 if got_sign
       else
         break if num_start_pos
+
         return 0
       end
     end
@@ -86,19 +90,22 @@ class Solutions
       when "-"
         break if num_start_pos
         return 0 if got_sign
+
         negative = true
       when "+"
         break if num_start_pos
         return 0 if got_sign
+
         positive = true
       when /\d/
-        num_start_pos = i unless num_start_pos
+        num_start_pos ||= i
         num_end_pos = i
       when " "
         break if num_start_pos
         return 0 if positive || negative
       else
         break if num_start_pos
+
         return 0
       end
     end
@@ -109,8 +116,8 @@ class Solutions
     result = 0
     1.upto(num_string.length) do |i|
       c = num_string[num_string.length - i]
-      putsif "  i:#{i} c:#{c} ...#{c.to_i * (10 ** (i-1))}"
-      result += c.to_i * (10 ** (i-1))
+      putsif "  i:#{i} c:#{c} ...#{c.to_i * (10**(i - 1))}"
+      result += c.to_i * (10**(i - 1))
     end
     result = 0 - result if negative
     result.clamp(LOWER_CLAMP, UPPER_CLAMP)

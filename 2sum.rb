@@ -37,7 +37,7 @@ test_cases = [
     label: "1000 elements reverse sorted",
   },
   {
-    params: [shuffled_array_1k,3],
+    params: [shuffled_array_1k, 3],
     result: [shuffled_array_1k.index(1), shuffled_array_1k.index(2)],
     label: "1000 elements shuffled",
   },

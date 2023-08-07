@@ -29,7 +29,7 @@ test_cases = [
   { input: "PAYPALISHIRING", rows: 4, result: "PINALSIGYAHRPI" },
   { input: "A", rows: 1, result: "A" },
   { input: "A", rows: 2, result: "A" },
-  { input: "ABC", rows: 1, result: "ABC" }
+  { input: "ABC", rows: 1, result: "ABC" },
 
 ]
 
@@ -73,7 +73,7 @@ def zigzag2(s, num_rows)
   return [s] if s.length == 1
   return [s] if num_rows == 1
 
-  rows = Array.new(num_rows) { String.new }
+  rows = Array.new(num_rows) { +"" }
   current_row = 0
   down = true
 

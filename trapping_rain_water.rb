@@ -76,9 +76,7 @@ class Solutions
   end
 
   # this is... 0(2n) ish?
-  def self.second_pass(height)
-
-  end
+  def self.second_pass(height); end
 end
 
 test_cases = [

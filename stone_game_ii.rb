@@ -2,33 +2,32 @@
 
 # https://leetcode.com/problems/stone-game-ii/
 #
-# Alice and Bob continue their games with piles of stones.  There are a number 
-# of piles arranged in a row, and each pile has a positive integer number of 
-# stones piles[i].  The objective of the game is to end with the most stones. 
-# 
+# Alice and Bob continue their games with piles of stones.  There are a number
+# of piles arranged in a row, and each pile has a positive integer number of
+# stones piles[i].  The objective of the game is to end with the most stones.
+#
 # Alice and Bob take turns, with Alice starting first.  Initially, M = 1.
-# 
-# On each player's turn, that player can take all the stones in the first X 
+#
+# On each player's turn, that player can take all the stones in the first X
 # remaining piles, where 1 <= X <= 2M.  Then, we set M = max(M, X).
-# 
+#
 # The game continues until all the stones have been taken.
-# 
+#
 # Assuming Alice and Bob play optimally, return the maximum number of stones Alice can get.
-# 
+#
 # Example 1:
-#   Input: piles = [2,7,9,4,4] Output: 10 
-#   
+#   Input: piles = [2,7,9,4,4] Output: 10
+#
 #   Explanation:  If Alice takes one pile at
 #   the beginning, Bob takes two piles, then Alice takes 2 piles again. Alice can
 #   get 2 + 4 + 4 = 10 piles in total. If Alice takes two piles at the beginning,
 #   then Bob can take all three piles left. In this case, Alice get 2 + 7 = 9
-#   piles in total. So we return 10 since it's larger. 
-#   
+#   piles in total. So we return 10 since it's larger.
+#
 # Example 2:
-# 
+#
 #   Input: piles = [1,2,3,4,5,100]
 #   Output: 104
-
 
 # Strategy
 #
@@ -37,7 +36,6 @@
 # - Select the optimal one
 # -   Q: Is this the local maximum, or the overall maximum?
 # -
-
 
 require "pry-byebug"
 require "benchmark/ips"
@@ -76,8 +74,8 @@ class Move
       #   stones_removed:,
       #   scores: new_scores,
       # }
-      debug_info = "#{previous_gamestate.player} removes #{x} "\
-                   "stones (#{stones_removed.join(',')}) "\
+      debug_info = "#{previous_gamestate.player} removes #{x} " \
+                   "stones (#{stones_removed.join(',')}) " \
                    "for #{stones_removed.sum} pts"
       indent = " " * ((previous_gamestate.depth * 3) + 1)
       puts("#{indent}#{debug_info}, args:#{args.except(:previous_move)}")
@@ -139,7 +137,7 @@ class GameState
     "poop"
   end
 
-  def initialize(piles:, previous_move: nil, scores: {alice:0, bob:0}, depth: 0)
+  def initialize(piles:, previous_move: nil, scores: { alice: 0, bob: 0 }, depth: 0)
     @piles = piles
     @previous_move = previous_move
     @next_moves = []
@@ -153,7 +151,7 @@ class GameState
       limit = [2 * m, piles.length - 1].min
       1.upto(2 * m).each do |x|
         if DEBUG
-          puts "#{indent}[GameState] creating Move #{{ piles:, m:, x:, limit:, player:, }}"
+          puts "#{indent}[GameState] creating Move #{{ piles:, m:, x:, limit:, player: }}"
         end
         @next_moves << Move.new(previous_gamestate: self, x:)
       end
@@ -166,14 +164,13 @@ end
 class Solutions
   def self.recursive(piles)
     gs = GameState.new(piles:)
-
   end
 end
 
 # ---------------------------------------------------------------------------------
 
 test_cases = [
-  { input: [2,7,9,4,4], result: 10 },
+  { input: [2, 7, 9, 4, 4], result: 10 },
   # { input: [1,2,3,4,5,100], result: 104 },
 ]
 

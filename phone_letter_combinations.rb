@@ -36,7 +36,7 @@ class Solutions
 
     results = [""]
 
-    digits[0..-1].each_char do |c|
+    digits[0..].each_char do |c|
       next if c == "1"
 
       current_chars = mappings[c]

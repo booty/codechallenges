@@ -18,14 +18,14 @@ class Solutions
     if nums3.length.odd?
       nums3[nums3.length / 2]
     else
-      (nums3[nums3.length / 2] + nums3[nums3.length / 2 -1]) / 2.0
+      (nums3[nums3.length / 2] + nums3[(nums3.length / 2) - 1]) / 2.0
     end
   end
 end
 
 test_cases = [
-  { input: [[1,3], [2]], result: 2 },
-  { input: [[1,2], [3,4]], result: 2.5 },
+  { input: [[1, 3], [2]], result: 2 },
+  { input: [[1, 2], [3, 4]], result: 2.5 },
 ]
 
 def putsif(str)
@@ -52,7 +52,7 @@ Benchmark.ips do |bm|
     test_cases.each_with_index do |tcase, _tindex|
       print "  case #{tcase[:input]}"
 
-      work = lambda { Solutions.send(meth, tcase[:input][0], tcase[:input][1] ) }
+      work = lambda { Solutions.send(meth, tcase[:input][0], tcase[:input][1]) }
       actual_result = work.call
 
       if actual_result == tcase[:result]

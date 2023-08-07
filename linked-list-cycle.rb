@@ -45,7 +45,6 @@ require_relative "common/testrunner"
 #
 # Follow up: Can you solve it using O(1) (i.e. constant) memory?
 
-
 # No idea how to run this locally but, this passes and is performant
 class Solutions
   def self.has_cycle(head)
@@ -56,10 +55,9 @@ class Solutions
       walker = walker&.next
       runner = runner&.next&.next
 
-      return false unless walker or runner
+      return false unless walker || runner
 
       return true if walker == runner
     end
   end
 end
-

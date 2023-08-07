@@ -52,7 +52,7 @@ test_cases = [
     params: [LONG_RANDOM_STRING_1, LONG_RANDOM_STRING_2],
     result: false,
     label: "long (diff string)",
-  }
+  },
 ]
 
 TestRunner.new.run(

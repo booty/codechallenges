@@ -29,7 +29,7 @@ DEBUG = false
 
 # from https://github.com/agrberg/unique_permutation/blob/master/lib/unique_permutation.rb
 class Array
-  def unique_permutation # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  def unique_permutation
     return enum_for(:unique_permutation) unless block_given?
 
     array_copy = sort
@@ -120,7 +120,7 @@ class Solutions
       steps.shift(2)
       steps.push(2)
       if steps.sum == n
-        solution_count += steps.permutation.map { |x| x.hash }.uniq.count
+        solution_count += steps.permutation.map(&:hash).uniq.count
       end
     end
     solution_count

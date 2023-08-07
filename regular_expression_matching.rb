@@ -115,7 +115,6 @@ class Solutions
     end
   end
 
-
   def self.mine(str, pat)
     # special simple case
     unless pat.include?("*") || pat.include?(".")

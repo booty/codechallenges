@@ -41,10 +41,11 @@ class Solutions
     map = Array.new(nums.length)
 
     nums.each_with_index do |num, i|
-      if (target-num).positive? && map[target-num]
+      if (target - num).positive? && map[target - num]
         # binding.pry
-        return [i, map[target-num]]
+        return [i, map[target - num]]
       end
+
       map[num] = i
     end
   end
@@ -54,9 +55,10 @@ class Solutions
     map = {}
 
     nums.each_with_index do |num, i|
-      if map[target-num]
-        return [i, map[target-num]]
+      if map[target - num]
+        return [i, map[target - num]]
       end
+
       map[num] = i
     end
   end
@@ -75,7 +77,6 @@ class Solutions
     end
   end
 end
-
 
 shuffled_array_1k = (1..1000).to_a.shuffle
 shuffled_array_10k = (1..10_000).to_a.shuffle
@@ -99,7 +100,7 @@ test_cases = [
     silent: true,
   },
   {
-    params: [shuffled_array_1k,3],
+    params: [shuffled_array_1k, 3],
     result: [shuffled_array_1k.index(1), shuffled_array_1k.index(2)],
     label: "1K shuffled",
   },

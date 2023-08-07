@@ -58,7 +58,7 @@ class Solutions
         putsif "  val_i:#{val_i}, index_i:#{index_i}, val_j:#{val_j}, index_j:#{index_j}"
 
         # find the index of something that would make i + j + k == 0
-        putsif "    do we have an element with value #{0-(val_i + val_j)}?"
+        putsif "    do we have an element with value #{0 - (val_i + val_j)}?"
         index_k = map[0 - (val_i + val_j)]
 
         next unless index_k

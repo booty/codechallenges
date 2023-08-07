@@ -22,7 +22,6 @@ DEBUG = false
 #
 # Return k.
 
-
 class Solutions
   def self.first(nums)
     lastval = -999
@@ -52,7 +51,7 @@ test_cases = [
   #   result: 2,
   # },
   {
-    params: [[0,0,1,1,1,2,2,3,3,4]],
+    params: [[0, 0, 1, 1, 1, 2, 2, 3, 3, 4]],
     result: 5,
   },
 ]
