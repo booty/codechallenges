@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "pry-byebug"
 
 class TreeNode
@@ -7,16 +9,20 @@ class TreeNode
   def initialize(value, left: nil, right: nil, parent: nil)
     @value = value
     @parent = parent
-    @left = left
-    @right = right
+    self.left = left
+    self.right = right
   end
 
   def left=(tree_node)
+    return unless tree_node
+
     @left = tree_node
     tree_node.parent = self
   end
 
   def right=(tree_node)
+    return unless tree_node
+
     @right = tree_node
     tree_node.parent = self
   end
@@ -28,10 +34,24 @@ class TreeNode
   def descendents
     result = children
 
-    result += left.children if left
-    result += right.children if right
+    result += left.descendents if left
+    result += right.descendents if right
 
     result
+  end
+
+  def depth
+    return 0 unless parent
+
+    result = 0
+    pointer = self
+
+    while pointer.parent
+      depth += 1
+      pointer = pointer.parent
+    end
+
+    depth
   end
 
   def width
@@ -43,9 +63,9 @@ class TreeNode
     max = widths.max
 
     return max if min.positive? && max.positive?
-    return min if min.negative? && max.negative?
+    return min.abs if min.negative? && max.negative?
 
-    max + min.abs
+    (max + min.abs).abs
   end
 
   def leaf_nodes
@@ -91,22 +111,3 @@ class TreeNode
     new_node
   end
 end
-
-# a = TreeNode.new("Aye")
-# a.left = TreeNode.new("Bee")
-# a.left.left = TreeNode.new("Cee")
-# a.right = TreeNode.new("Dee")
-# a.right.right = TreeNode.new("Eee")
-
-# root = TreeNode.from_hash("foo")
-# puts root
-
-# root = TreeNode.from_hash({fart: nil})
-# puts root
-
-# root = TreeNode.from_hash({Jack: {left: {John: {left: "Euclid", right: "Choco"}}, right: "Matthew"}})
-# puts root
-# puts root.left
-# puts root.left.right
-
-# "ok"

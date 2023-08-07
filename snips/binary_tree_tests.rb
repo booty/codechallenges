@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative "binary_tree"
 
 module Testable
@@ -18,11 +20,11 @@ module Testable
     )
   end
 
-  def assert_equal(one, two, description)
+  def assert_equal(expected, actual, description = "")
     record_and_display_result TestResult.new(
-      success: one == two,
+      success: expected == actual,
       description:,
-      details: ["expected: #{one}", "actual: #{two}"],
+      details: ["expected: #{expected}", "actual: #{actual}"],
     )
   end
 
@@ -81,14 +83,128 @@ end
 class TestTreeNode
   include Testable
 
-  def simple_test
-    assert true, "verify we're not going crazy"
+  def initialize
+    @empty_tree = TreeNode.new("A")
+
+    @simple_tree = TreeNode.from_hash({ A: { left: "B", right: "C" } })
+    # @simple_tree.left = TreeNode.new("B")
+    # @simple_tree.right = TreeNode.new("C")
+
+    @left_leaning_tree = TreeNode.new("A")
+    @left_leaning_tree.left = TreeNode.new("B")
+    @left_leaning_tree.left.left = TreeNode.new("C")
+    @left_leaning_tree.left.left.left = TreeNode.new("D")
+
+    @family = TreeNode.from_hash(
+      {
+        Jack: {
+          left: {
+            John: {
+              left: "Euclid",
+              right: "Choco",
+            },
+          },
+          right: "Matthew",
+        },
+      },
+    )
+
+    @crooked = TreeNode.from_hash(
+      {
+        a: {
+          right: "b",
+          left: {
+            c: {
+              right: {
+                d: {
+                  right: {
+                    e: {
+                      left: {
+                        f: {
+                          left: {
+                            g: {
+                              left: "h",
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    )
   end
 
-  def another_test
-    assert_equal "cat", "dog", "cats are the same as dogs, right?"
-    assert true, "reality check"
-    assert false, "insanity check"
-    assert_equal "john", "john", "am I myself"
+  def test_initialize
+    bar = TreeNode.new("bar")
+    baz = TreeNode.new("baz")
+
+    foo = TreeNode.new(
+      "foo",
+      left: bar,
+      right: baz,
+    )
+
+    assert_equal(foo.value, "foo", "value set correctly")
+    assert_equal(foo.left, bar, "left assigned correctly")
+    assert_equal(foo.right, baz, "right assigned correctly")
+    assert_equal(bar.parent, foo, "left's parent is set")
+    assert_equal(baz.parent, foo, "right's parent is set")
+  end
+
+  def from_hash
+    simple1 = TreeNode.from_hash("foo")
+    assert(simple1.is_a?(TreeNode), "creation from stringval")
+    assert_equal("foo", simple1.value, "value set from stringval")
+
+    simple2 = TreeNode.from_hash({ foo: nil })
+    assert(simple2.is_a?(TreeNode), "creation from simple hash")
+    assert_equal("foo", simple2.value, "value set from simple hash")
+
+    assert_equal("Jack", @family.value, "root created from hash")
+    assert_equal("John", @family.left.value, "left child")
+    assert_equal("Matthew", @family.right.value, "right child")
+    assert_equal("Euclid", @family.left.left.value, "left grandchild")
+    assert_equal("Choco", @family.left.right.value, "right grandchild")
+  end
+
+  def children
+    assert_equal(
+      [],
+      @empty_tree.children,
+      "empty tree",
+    )
+    assert_equal(
+      ["John", "Matthew"].sort,
+      @family.children.map(&:value).sort,
+      "of family",
+    )
+  end
+
+  def descendents
+    assert_equal(
+      [],
+      @empty_tree.descendents,
+      "empty tree",
+    )
+    assert_equal(
+      ["John", "Euclid", "Choco", "Matthew"].sort,
+      @family.descendents.map(&:value).sort,
+      "of family",
+    )
+  end
+
+  def width
+    assert_equal(0, @empty_tree.width, "width of empty tree")
+    assert_equal(2, @simple_tree.width, "width of simple tree")
+    assert_equal(3, @family.width, "width of family tree")
+    assert_equal(3, @left_leaning_tree.width, "width of left leaning tree")
+    assert_equal(3, @crooked.width, "width of crooked tree")
   end
 end
+
+TestTreeNode.new.test
