@@ -78,7 +78,7 @@ class TreeNode
 
   def leaf_nodes
     desc = descendents
-    return [self] if d.none?
+    return [self] if desc.none?
 
     desc.select { |d| d.children.none? }
   end

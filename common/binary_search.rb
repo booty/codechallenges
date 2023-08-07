@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
+# returns index of match
 def binary(nums, target)
   jump = nums.length / 2
   i = jump
 
   loop do
     n = nums[i]
-    puts "i:#{i} nums[i]:#{n}"
 
     return i if n == target
     return nil unless n
