@@ -47,11 +47,19 @@ class TreeNode
     pointer = self
 
     while pointer.parent
-      depth += 1
+      result += 1
       pointer = pointer.parent
     end
 
-    depth
+    result
+  end
+
+  # not particularly efficient ¯\_(ツ)_/¯
+  def max_descendent_depth
+    d = descendents
+    return 0 if d.none?
+
+    d.map(&:depth).max
   end
 
   def width
@@ -69,7 +77,10 @@ class TreeNode
   end
 
   def leaf_nodes
-    descendents.select { |d| d.children.none? }
+    desc = descendents
+    return [self] if d.none?
+
+    desc.select { |d| d.children.none? }
   end
 
   def width_from_root

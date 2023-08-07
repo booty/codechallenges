@@ -54,7 +54,8 @@ module Testable
       end
     end
 
-    "#{format_method_name('RESULTS')}\npassed:#{passed} failed:#{failed}\n\n"
+    icon = failed.zero? ? "😎" : "💀"
+    "#{format_method_name('RESULTS')}\n  #{icon} passed:#{passed} failed:#{failed}\n\n"
   end
 
   def record_and_display_result(test_result)
@@ -87,8 +88,6 @@ class TestTreeNode
     @empty_tree = TreeNode.new("A")
 
     @simple_tree = TreeNode.from_hash({ A: { left: "B", right: "C" } })
-    # @simple_tree.left = TreeNode.new("B")
-    # @simple_tree.right = TreeNode.new("C")
 
     @left_leaning_tree = TreeNode.new("A")
     @left_leaning_tree.left = TreeNode.new("B")
@@ -204,6 +203,37 @@ class TestTreeNode
     assert_equal(3, @family.width, "width of family tree")
     assert_equal(3, @left_leaning_tree.width, "width of left leaning tree")
     assert_equal(3, @crooked.width, "width of crooked tree")
+  end
+
+  def depth
+    assert_equal(0, @empty_tree.depth, "depth of empty tree")
+    assert_equal(1, @simple_tree.right.depth, "depth of simple tree node")
+    assert_equal(3, @left_leaning_tree.left.left.left.depth, "depth of left leaning tree")
+  end
+
+  def max_descendent_depth
+    assert_equal(0, @empty_tree.max_descendent_depth, "max depth of empty tree")
+    assert_equal(1, @simple_tree.max_descendent_depth, "max depth of simple tree")
+    assert_equal(3, @left_leaning_tree.max_descendent_depth, "max depth of left leaning tree")
+    assert_equal(6, @crooked.max_descendent_depth, "max depth of crooked tree")
+  end
+
+  def leaf_nodes
+    assert_equal(
+      ["A"],
+      @empty_tree.leaf_nodes.map(&:value),
+      "empty tree",
+    )
+    assert_equal(
+      ["D"],
+      @left_leaning_tree.leaf_nodes.map(&:value),
+      "left leaning tree",
+    )
+    assert_equal(
+      ["b", "h"],
+      @crooked.leaf_nodes.map(&:value).sort,
+      "crooked tree",
+    )
   end
 end
 
