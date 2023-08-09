@@ -1,25 +1,18 @@
 # frozen_string_literal: true
 
-# returns index of match
-def binary(nums, target)
-  jump = nums.length / 2
-  i = jump
+def binary_search(nums, target)
+  left = 0
+  right = nums.length - 1
 
-  loop do
-    n = nums[i]
-
-    return i if n == target
-    return nil unless n
-    return nil if i < 0
-    return nil if n > target && nums[i - 1] < target
-
-    jump = jump / 2
-    jump = 1 if jump < 1
-
-    if n > target
-      i -= jump
+  while left <= right
+    i = ((left + right) / 2).floor
+    if nums[i] < target
+      left = i + 1
+    elsif nums[i] > target
+      right = i - 1
     else
-      i += jump
+      return i
     end
   end
+  nil
 end
