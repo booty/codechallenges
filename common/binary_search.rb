@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# assumes list is sorted
 def binary_search(nums, target)
   left = 0
   right = nums.length - 1
