@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require_relative "binary_tree"
-require_relative "testable"
+require "tinytest"
 
 class TestTreeNode
-  include Testable
+  include TinyTest
 
   def initialize
     @empty_tree = TreeNode.new("A")
