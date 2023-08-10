@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require_relative "binary_search"
-require_relative "testable"
+require "tinytest"
 
 class TestBinarySearch
-  include Testable
+  include TinyTest
 
   def ary_with_target_7_items
     ary = [0, 1, 2, 3, 4, 5, 7]
