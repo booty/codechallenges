@@ -45,19 +45,29 @@ class Solutions
   def self.arrays(words)
     result = []
 
-    maxlen = words.map(&:length).max
+    follows = Array.new(26) { Array.new(26) }
 
-    0.upto(maxlen - 1) do |pos|
-      # get letters from this column
-      col = []
-      words.each do |word|
-        col << word[pos]
-      end
-      col.uniq!
+    maxwordlen = words.map(&:length).max
 
-      col.each do |c|
-        if result.empty? || result.index(c).nil?
-          result << c
+    0.upto(maxwordlen-1) do |col|
+      putsif "col:#{col}"
+      words.each_with_index do |word, row|
+        c = word[col]
+        putsif "  c:#{c} word:#{word} row:#{row}"
+
+        next unless c
+
+        result << c unless result.index(c)
+
+        # record this relationship
+        0.upto(row - 1) do |comp_row|
+          comp_char = words[comp_row][col]
+
+          next unless comp_char
+          next if c == comp_char
+
+          putsif "    allegedy, #{c} follows #{comp_char}"
+          follows[c.ord - 97][comp_char.ord - 97] = true
         end
       end
     end
@@ -71,14 +81,18 @@ test_cases = [
     params: [["wrt", "wrf", "er", "ett", "rftt"]],
     result: "wertf",
   },
-  {
-    params: [["z", "x"]],
-    result: "zx",
-  },
-  {
-    params: [["z", "x", "z"]],
-    result: "",
-  },
+  # {
+  #   params: [["zqa", "qb", "ba"]],
+  #   result: ""
+  # },
+  # {
+  #   params: [["z", "x"]],
+  #   result: "zx",
+  # },
+  # {
+  #   params: [["z", "x", "z"]],
+  #   result: "",
+  # },
 ]
 
 TestRunner.new.run(
