@@ -50,18 +50,43 @@ require_relative "common/testrunner"
 #     0 <= discount <= 100
 
 class Solutions
-  # def self.regex(sentence, discount)
-  #   regex = /(\$[0-9]+\.*[0-9]*)/
-  #   result = ""
-  #   sentence.scan(regex).each do |match|
-  #     price = match[0][1..].to_f
-  #     discount_amt = (discount.to_f / 100) * price
-  #     new_price = (price - discount_amt).round(2)
-  #     putsif "match:#{match} "
-  #     result = sentence.gsub(match[0], "$#{new_price}")
-  #   end
-  #   result
-  # end
+  # ~30% slower than regex_opt, presumably because of the capture group
+  def self.regex_opt_capture_groups(sentence, discount)
+    regex = /\A\$([0-9]+\.*[0-9]*)\z/
+
+    result = []
+    discount_multiplier = 1 - (discount.to_f / 100)
+
+    sentence.split.each do |word|
+      match_data = word.match(regex)
+
+      unless match_data
+        result << word
+        next
+      end
+
+      old_price = match_data[1].to_f
+      new_price = old_price * discount_multiplier
+      result << "$#{sprintf('%.2f', new_price)}"
+    end
+
+    result.join(" ")
+  end
+
+  def self.regex_opt(sentence, discount)
+    regex = /\A\$[0-9]+\.*[0-9]*\z/
+
+    result = sentence.split
+    discount_multiplier = 1 - (discount.to_f / 100)
+
+    result.each_with_index do |word, index|
+      next unless word.match?(regex)
+
+      result[index] = "$#{sprintf('%.2f', word[1..].to_f * discount_multiplier)}"
+    end
+
+    result.join(" ")
+  end
 
   def self.regex(sentence, discount)
     regex = /\A\$[0-9]+\.*[0-9]*\z/
@@ -69,8 +94,6 @@ class Solutions
     result = []
 
     sentence.split.each do |word|
-      putsif "word:#{word}"
-
       unless word.match?(regex)
         result << word
         next
@@ -79,8 +102,6 @@ class Solutions
       old_price = word[1..].to_f
       discount_amt = old_price * (discount.to_f / 100)
       new_price = old_price - discount_amt
-
-      putsif "  old_price:#{old_price} discount:#{discount} new_price:#{new_price}"
 
       result << "$#{sprintf('%.2f', new_price)}"
     end
