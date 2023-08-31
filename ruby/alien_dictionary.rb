@@ -49,7 +49,7 @@ class Solutions
 
     maxwordlen = words.map(&:length).max
 
-    0.upto(maxwordlen-1) do |col|
+    0.upto(maxwordlen - 1) do |col|
       putsif "col:#{col}"
       words.each_with_index do |word, row|
         c = word[col]
@@ -67,6 +67,12 @@ class Solutions
           next if c == comp_char
 
           putsif "    allegedy, #{c} follows #{comp_char}"
+
+          if follows[comp_char.ord - 97][c.ord - 97]
+            putsif "    HOWEVER this contradicts previous evidence"
+            return ""
+          end
+
           follows[c.ord - 97][comp_char.ord - 97] = true
         end
       end

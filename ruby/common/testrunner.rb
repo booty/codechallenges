@@ -39,8 +39,8 @@ class TestRunner
       "\t✅ pass"
     else
       "\t❌ fail!" \
-        "\t\tactual: #{actual_result}" \
-        "\t\texpected: #{expected_result}"
+        "\n\tactual: #{actual_result}" \
+        "\n\texpected: #{expected_result}"
     end
   end
 
