@@ -9,3 +9,4 @@ gem "rubocop-performance", "~> 1.17", require: false
 
 # gem "tinytest", path: "/Users/booty/code/tinytest", require: false
 gem "tinytest", github: "booty/tinytest"
+gem "nokogiri", "~> 1.15"
